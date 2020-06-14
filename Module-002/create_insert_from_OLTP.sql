@@ -290,6 +290,7 @@ where mf.geo_id in (select geo_id from geo_dim gd where state = 'California')
 	and region = 'West'
 	and returned = 'Yes'
 	and to_char(ship_date , 'Month') like '%June%'
+	and date_part('year',ship_date) = 2019
 
 
 
