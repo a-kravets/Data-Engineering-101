@@ -289,13 +289,13 @@ select * from metrics_fact mf
 --checking
 select
 	distinct cd.customer_name
-	,order_date
+	--,order_date
 	,sales
 from
 	customer_dim cd 
-left join metrics_fact mf on mf.customer_id = cd.customer_id 
-left join calendar_dim c on c.calendar_id = mf.calendar_id
-left join product_dim p on p.product_id = mf.product_id
+left join metrics_fact mf on mf.cust_id = cd.cust_id 
+--left join calendar_dim c on c.calendar_id = mf.calendar_id
+left join product_dim p on p.prod_id = mf.prod_id
 left join shipping_dim s on mf.ship_id = s.ship_id 
 left join staff_dim sd on sd.staff_id = mf.staff_id 
 left join returns_dim rd on rd.order_id = mf.order_id 
@@ -304,8 +304,6 @@ where mf.geo_id in (select geo_id from geo_dim gd where state = 'California')
 	and shipping_mode = 'First Class'
 	and region = 'West'
 	and returned = 'Yes'
-	and to_char(ship_date , 'Month') like '%June%'
-	and date_part('year',ship_date) = 2019
 
 
 select count(*) from orders --9993
