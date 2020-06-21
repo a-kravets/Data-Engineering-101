@@ -311,7 +311,12 @@ where mf.geo_id in (select geo_id from geo_dim gd where state = 'California')
 
 
 select count(*) from orders --9993
+
 select count(*) from metrics_fact mf --9993 
+inner join shipping_dim s on mf.ship_id=s.ship_id
+inner join geo_dim g on mf.geo_id=g.geo_id
+inner join product_dim p on mf.prod_id=p.prod_id
+inner join customer_dim cd on mf.cust_id=cd.cust_id;
 
 
 select * from dw.sales_fact sf
