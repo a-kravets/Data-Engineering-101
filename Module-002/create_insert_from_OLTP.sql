@@ -74,16 +74,17 @@ select * from shipping_dim sd
 drop table if exists customer_dim ;
 CREATE TABLE "customer_dim"
 (
+ "cust_id" serial NOT NULL, 
  "customer_id"   varchar(8) NOT NULL,
  "customer_name" varchar(22) NOT NULL,
- CONSTRAINT "PK_customer_dim" PRIMARY KEY ( "customer_id" )
+ CONSTRAINT "PK_customer_dim" PRIMARY KEY ( "cust_id" )
 );
 
 --deleting rows
 truncate table customer_dim;
 --inserting
 insert into customer_dim 
-select customer_id, customer_name from (select distinct customer_id, customer_name from orders ) a
+select 100+row_number() over(), customer_id, customer_name from (select distinct customer_id, customer_name from orders ) a
 --checking
 select * from customer_dim cd  
 
@@ -111,8 +112,21 @@ insert into geo_dim
 select 100+row_number() over(), country, city, state, postal_code from (select distinct country, city, state, postal_code from orders ) a
 --checking
 select * from geo_dim gd 
+where country is null or city is null or state is null or postal_code is null
+
+-- City Burlington, Vermont, geo_id = 269 doesn't have postal code
+update geo_dim
+set postal_code = '05401'
+where city = 'Burlington'  and postal_code is null;
+
+--also update source file
+update orders
+set postal_code = '05401'
+where city = 'Burlington'  and postal_code is null;
 
 
+select * from geo_dim
+where city = 'Burlington'
 
 
 --PRODUCT
@@ -121,19 +135,20 @@ select * from geo_dim gd
 drop table if exists product_dim ;
 CREATE TABLE "product_dim"
 (
- "product_id"   serial NOT NULL,
+ "prod_id"   serial NOT NULL,
+ "product_id"   varchar(15) NOT NULL,
  "product_name" varchar(127) NOT NULL,
  "category"     varchar(15) NOT NULL,
  "sub_category" varchar(11) NOT NULL,
  "segment"      varchar(11) NOT NULL,
- CONSTRAINT "PK_product_dim" PRIMARY KEY ( "product_id" )
+ CONSTRAINT "PK_product_dim" PRIMARY KEY ( "prod_id" )
 );
 
 --deleting rows
 truncate table product_dim ;
 --
 insert into product_dim 
-select 100+row_number() over(), product_name, category, subcategory, segment from (select distinct product_id, product_name, category, subcategory, segment from orders ) a
+select 100+row_number() over(), product_id, product_name, category, subcategory, segment from (select distinct product_id, product_name, category, subcategory, segment from orders ) a
 --checking
 select * from product_dim cd  
 
@@ -186,22 +201,22 @@ CREATE TABLE "metrics_fact"
  "row_id"      serial NOT NULL,
  "sales"       numeric(9,4) NOT NULL,
  "profit"      numeric(21,16) NOT NULL,
- "customer_id" varchar(8) NOT NULL,
- "product_id"  integer NOT NULL,
+ "cust_id" integer NOT NULL,
+ "prod_id"  integer NOT NULL,
  "quantity"    int4 NOT NULL,
  "discount"    numeric(4,2) NOT NULL,
  "ship_id"     integer NOT NULL,
  "geo_id"      integer NOT NULL,
- "calendar_id" integer NOT NULL,
+ --"calendar_id" integer NOT NULL,
  "staff_id"    integer NOT NULL,
  "order_id"    varchar(25) NOT NULL,
  CONSTRAINT "PK_sales_fact" PRIMARY KEY ( "row_id" ),
  --CONSTRAINT "FK_107" FOREIGN KEY ( "order_id" ) REFERENCES "returns_dim" ( "order_id" ),
- CONSTRAINT "FK_30" FOREIGN KEY ( "customer_id" ) REFERENCES "customer_dim" ( "customer_id" ),
- CONSTRAINT "FK_43" FOREIGN KEY ( "product_id" ) REFERENCES "product_dim" ( "product_id" ),
+ CONSTRAINT "FK_30" FOREIGN KEY ( "cust_id" ) REFERENCES "customer_dim" ( "cust_id" ),
+ CONSTRAINT "FK_43" FOREIGN KEY ( "prod_id" ) REFERENCES "product_dim" ( "prod_id" ),
  CONSTRAINT "FK_50" FOREIGN KEY ( "ship_id" ) REFERENCES "shipping_dim" ( "ship_id" ),
  CONSTRAINT "FK_60" FOREIGN KEY ( "geo_id" ) REFERENCES "geo_dim" ( "geo_id" ),
- CONSTRAINT "FK_84" FOREIGN KEY ( "calendar_id" ) REFERENCES "calendar_dim" ( "calendar_id" ),
+ --CONSTRAINT "FK_84" FOREIGN KEY ( "calendar_id" ) REFERENCES "calendar_dim" ( "calendar_id" ),
  CONSTRAINT "FK_92" FOREIGN KEY ( "staff_id" ) REFERENCES "staff_dim" ( "staff_id" )
 );
 
@@ -212,12 +227,12 @@ CREATE INDEX "fkIdx_107" ON "metrics_fact"
 
 CREATE INDEX "fkIdx_30" ON "metrics_fact"
 (
- "customer_id"
+ "cust_id"
 );
 
 CREATE INDEX "fkIdx_43" ON "metrics_fact"
 (
- "product_id"
+ "prod_id"
 );
 
 CREATE INDEX "fkIdx_50" ON "metrics_fact"
@@ -230,10 +245,10 @@ CREATE INDEX "fkIdx_60" ON "metrics_fact"
  "geo_id"
 );
 
-CREATE INDEX "fkIdx_84" ON "metrics_fact"
-(
- "calendar_id"
-);
+--CREATE INDEX "fkIdx_84" ON "metrics_fact"
+--(
+-- "calendar_id"
+--);
 
 CREATE INDEX "fkIdx_92" ON "metrics_fact"
 (
@@ -249,26 +264,26 @@ select
 	 100+row_number() over()
 	 ,sales
 	 ,profit
-	 ,customer_id
-	 ,p.product_id
+	 ,cust_id
+	 ,p.prod_id
 	 ,quantity
 	 ,discount
 	 ,ship_id
 	 ,geo_id
-	 ,calendar_id
+	 --,calendar_id
 	 ,staff_id
 	 ,o.order_id
 from orders o 
 inner join shipping_dim s on o.ship_mode = s.shipping_mode
-inner join calendar_dim c on o.order_date = c.order_date
-inner join geo_dim g on o.postal_code = g.postal_code
-inner join product_dim p on o.product_name = p.product_name
-inner join staff_dim sd on o.region = sd.region;
+--inner join calendar_dim c on o.order_date = c.order_date and o.ship_date = c.ship_date 
+inner join geo_dim g on o.postal_code = g.postal_code and g.country = o.country and g.city = o.city and o.state = g.state
+inner join product_dim p on o.product_name = p.product_name and o.segment=p.segment and o.subcategory=p.sub_category and o.category=p.category and o.product_id=p.product_id
+inner join customer_dim cd on cd.customer_id=o.customer_id and cd.customer_name=o.customer_name 
+inner join staff_dim sd on o.region = sd.region --and o.person=sd.person;
+
+
 
 select * from metrics_fact mf 
-
-select * from returns_dim rd 
-where order_id = 'US-2018-116400'
 
 
 --checking
@@ -293,4 +308,5 @@ where mf.geo_id in (select geo_id from geo_dim gd where state = 'California')
 	and date_part('year',ship_date) = 2019
 
 
-
+select count(*) from orders --9993
+select count(*) from metrics_fact mf --9993 
