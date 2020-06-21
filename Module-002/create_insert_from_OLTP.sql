@@ -199,6 +199,8 @@ drop table if exists metrics_fact ;
 CREATE TABLE "metrics_fact"
 (
  "row_id"      serial NOT NULL,
+ "order_date"	date,
+ "ship_date"	date,
  "sales"       numeric(9,4) NOT NULL,
  "profit"      numeric(21,16) NOT NULL,
  "cust_id" integer NOT NULL,
@@ -262,6 +264,8 @@ truncate table metrics_fact ;
 insert into metrics_fact 
 select
 	 100+row_number() over()
+	 ,order_date
+	 ,ship_date
 	 ,sales
 	 ,profit
 	 ,cust_id
@@ -308,3 +312,10 @@ where mf.geo_id in (select geo_id from geo_dim gd where state = 'California')
 
 select count(*) from orders --9993
 select count(*) from metrics_fact mf --9993 
+
+
+select * from dw.sales_fact sf
+limit 10
+
+select * from metrics_fact sf
+limit 10
