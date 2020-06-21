@@ -318,9 +318,3 @@ inner join geo_dim g on mf.geo_id=g.geo_id
 inner join product_dim p on mf.prod_id=p.prod_id
 inner join customer_dim cd on mf.cust_id=cd.cust_id;
 
-
-select * from dw.sales_fact sf
-limit 10
-
-select * from metrics_fact sf
-limit 10
