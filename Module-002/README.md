@@ -17,7 +17,7 @@ In my star schema, there will be a fact table and few dimensional tables:
 
 # ETL PIPELINE
 
-My ETL pipline is structured to read data from OLTP table (orders in csv), create Postgres database, insert values and process create a new schema and load data.
+My ETL pipline is structured to read data from OLTP table (orders in csv), create Postgres database, insert values and create a new schema and load data.
 
 # FILES
 
