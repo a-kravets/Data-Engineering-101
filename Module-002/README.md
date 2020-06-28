@@ -11,8 +11,9 @@ This will help the analytic team to get the most information and do their analys
 
 In my star schema, there will be a fact table and few dimensional tables:
 
-Fact table: sales_fact.
-Dimension tables: shipping_dim, customer_dim, geo_dim, product_dim, calendar_dim.
+**Fact table:** sales_fact.
+
+**Dimension tables:** shipping_dim, customer_dim, geo_dim, product_dim, calendar_dim.
 
 # ETL PIPELINE
 
