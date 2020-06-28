@@ -9,11 +9,15 @@ They would like to create a Postgres database with tables designed to optimize q
 I choose a star schema design for this project because it's simple and straightforward.
 This will help the analytic team to get the most information and do their analysis in the most efficient way.
 
-In my star schema, there will be a fact table and few dimensional tables:
+In my star schema, there will be a fact table and few dimensional tables.
 
 **Fact table:** sales_fact.
 
 **Dimension tables:** shipping_dim, customer_dim, geo_dim, product_dim, calendar_dim.
+
+# DATABASE AND CONNECTIONS
+
+The database resides on Amazon RDS with connections from DataStudio and Metabase
 
 # ETL PIPELINE
 
