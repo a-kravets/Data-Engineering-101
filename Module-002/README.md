@@ -17,7 +17,7 @@ In my star schema, there will be a fact table and few dimensional tables.
 
 # DATABASE AND CONNECTIONS
 
-The database resides on Amazon RDS with connections from DataStudio and Metabase
+The database resides on Amazon RDS with connections from [DataStudio](https://datastudio.google.com/s/rTnsbI5_oU8) and Metabase
 
 # ETL PIPELINE
 
