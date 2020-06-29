@@ -27,6 +27,6 @@ My ETL pipline is structured to read data from OLTP table (orders in csv), creat
 
 This project has two final files:
 
-* `<Sample - Superstore.xls>` contains our data in three tables
-* `<stg.orders.sql>` loads data from from csv to database (staging)
-* `<from_stg_to_dw.sql>` creates a new schema and loads data accordingly
+* `Sample - Superstore.xls` contains our data in three tables
+* `stg.orders.sql` loads data from from csv to database (staging)
+* `from_stg_to_dw.sql` creates a new schema and loads data accordingly
