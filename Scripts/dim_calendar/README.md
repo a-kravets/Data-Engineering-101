@@ -20,3 +20,4 @@
 * `uspDateDimPopulate.py` is a Python script populates a table DATE_DIM
 * `uspDateDimCreation.sql` is a SQL source script which creates a table DATE_DIM with 16 columns (used in `uspDateDimCreation.py`)
 * `uspDateDimPopulate.sql` is a SQL source script which populates a table DATE_DIM (used in `uspDateDimPopulate.py`)
+* `CreateLoginUserPermission.sql` is script that creates login and user for accessing SQL Server remotely
