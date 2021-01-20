@@ -1,3 +1,8 @@
+'''
+This script populates a table DATE_DIM with 16 columns, which was created by uspDateDimCreation.py script.
+It is implemented as a SQL stored procedure for SQL Server.
+'''
+
 import pyodbc
 
 server = '[SERVER NAME]'
@@ -16,6 +21,7 @@ password = '[mypassword]'
 cursor = pyodbc.connect('DRIVER={SQL Server};SERVER=' + server + ';DATABASE=' + db + ';UID='+username+';PWD='+ password)
 '''
 
+#first we check if there is a procedure in db and if there's we'll drop it
 query_drop = """
 
 IF OBJECT_ID ('uspDateDimPopulate', 'P') IS NOT NULL
@@ -86,5 +92,29 @@ try:
     cursor.execute(query_create)
     cursor.execute(query_exec)
     conn.commit()
-except pyodbc.ProgrammingError:
-    pass
+except pyodbc.Error as ex:
+    sqlstate = ex.args[1]
+    print(sqlstate)
+
+query_check = """
+
+    SELECT TOP 1 * FROM DATE_DIM;
+    
+"""
+
+try:
+    cursor.execute(query_check)
+except pyodbc.Error as ex:
+    sqlstate = ex.args[1]
+    print(sqlstate)
+
+cursor.execute(query_check)
+column = [column[0] for column in cursor.description]
+
+
+print("Here's a sample of data we've just populated our table with: \n")
+for row in cursor.fetchall():
+    counter = 0
+    for i in column: 
+        print(str(counter+1) + '. ' + i + ': ' + str(row[counter]))
+        counter = counter + 1

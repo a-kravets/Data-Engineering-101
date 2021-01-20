@@ -1,3 +1,9 @@
+'''
+This script creates a table DATE_DIM with 16 columns.
+It is implemented as a SQL stored procedure for SQL Server.
+In order to populate it, run uspDateDimPopulate.py script.
+'''
+
 import pyodbc
 
 server = '[SERVER NAME]'
@@ -65,5 +71,26 @@ try:
     cursor.execute(query_create)
     cursor.execute(query_exec)
     conn.commit()
-except pyodbc.ProgrammingError:
-    pass
+except pyodbc.Error as ex:
+    sqlstate = ex.args[1]
+    print(sqlstate)
+
+query_check = """
+
+    SELECT * FROM DATE_DIM;
+    
+"""
+
+try:
+    cursor.execute(query_check)
+except pyodbc.Error as ex:
+    sqlstate = ex.args[1]
+    print(sqlstate)
+
+column = [column[0] for column in cursor.description]
+print('The following columns were created: \n')
+
+counter = 1
+for i in column: 
+    print(str(counter) + '. ' + i)
+    counter = counter + 1
