@@ -1,14 +1,20 @@
 '''
 This script populates a table DATE_DIM with 16 columns, which was created by uspDateDimCreation.py script.
-It is implemented as a SQL stored procedure for SQL Server.
+It is implemented as a SQL stored procedure for SQL Server, which is executed remotely from this script.
+Note that this stored procedure (uspDateDimCreation) is reusable and will be also available for you
+directly in SQL Server once you run this script successfully.
 '''
 
+# pyodbc library will help us to connect to SQL Server
 import pyodbc
 
+# type you server name/address and database name you want to create DATE_DIM table in
 server = '[SERVER NAME]'
 db = '[DATABASE NAME]'
 
 # create Connection and Cursor objects for localhost
+# Note that you may have other DRIVER, for example 'DRIVER={ODBC Driver 17 for SQL Server}'
+# If this script raises connection error, check what it says and try to write other driver you have at your PC
 conn = pyodbc.connect('DRIVER={SQL Server};SERVER=' + server + ';DATABASE=' + db + ';Trusted_Connection=yes')
 cursor = conn.cursor()
 
@@ -21,7 +27,8 @@ password = '[mypassword]'
 cursor = pyodbc.connect('DRIVER={SQL Server};SERVER=' + server + ';DATABASE=' + db + ';UID='+username+';PWD='+ password)
 '''
 
-#first we check if there is a procedure in db and if there's we'll drop it
+# First we check if uspDateDimPopulate stored procedure already exists in DB. If it does, we delete it.
+# Note that we create queries, but will execute them all together later.
 query_drop = """
 
 IF OBJECT_ID ('uspDateDimPopulate', 'P') IS NOT NULL
@@ -29,6 +36,7 @@ IF OBJECT_ID ('uspDateDimPopulate', 'P') IS NOT NULL
     
 """
 
+# Now we'll create a query which will populate our columns in DATE_DIM table with 16 rows as shown below.
 query_create = """
 
 CREATE PROCEDURE uspDateDimPopulate
@@ -81,12 +89,14 @@ AS
 
 """
 
+# This query will execute our stored procedure
 query_exec = """
 
     EXEC uspDateDimPopulate '20200101', '20201231';
     
 """
 
+# Since we've created all three queries we need, we may execute them
 try:
     cursor.execute(query_drop)
     cursor.execute(query_create)
@@ -96,22 +106,23 @@ except pyodbc.Error as ex:
     sqlstate = ex.args[1]
     print(sqlstate)
 
+# Now let's check how it all works and create a query that shows us one row from the table we've populated
 query_check = """
 
     SELECT TOP 1 * FROM DATE_DIM;
     
 """
 
+# Executing our check query
 try:
     cursor.execute(query_check)
 except pyodbc.Error as ex:
     sqlstate = ex.args[1]
     print(sqlstate)
 
-cursor.execute(query_check)
 column = [column[0] for column in cursor.description]
 
-
+# This will print out one row
 print("Here's a sample of data we've just populated our table with: \n")
 for row in cursor.fetchall():
     counter = 0

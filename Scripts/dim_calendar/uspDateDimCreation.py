@@ -1,15 +1,21 @@
 '''
 This script creates a table DATE_DIM with 16 columns.
-It is implemented as a SQL stored procedure for SQL Server.
+It is implemented as a SQL stored procedure for SQL Server, which is executed remotely from this script.
+Note that this stored procedure (uspDateDimCreation) is reusable and will be also available for you
+directly in SQL Server once you run this script successfully.
 In order to populate it, run uspDateDimPopulate.py script.
 '''
 
+# pyodbc library will help us to connect to SQL Server
 import pyodbc
 
+# type you server name/address and database name you want to create DATE_DIM table in
 server = '[SERVER NAME]'
 db = '[DATABASE NAME]'
 
 # create Connection and Cursor objects for localhost
+# Note that you may have other DRIVER, for example 'DRIVER={ODBC Driver 17 for SQL Server}'
+# If this script raises connection error, check what it says and try to write other driver you have at your PC
 conn = pyodbc.connect('DRIVER={SQL Server};SERVER=' + server + ';DATABASE=' + db + ';Trusted_Connection=yes')
 cursor = conn.cursor()
 
@@ -22,7 +28,8 @@ password = '[mypassword]'
 cursor = pyodbc.connect('DRIVER={SQL Server};SERVER=' + server + ';DATABASE=' + db + ';UID='+username+';PWD='+ password)
 '''
 
-
+# First we check if uspDateDimCreation stored procedure already exists in DB. If it does, we delete it.
+# Note that we create queries, but will execute them all together later.
 query_drop = """
 
 IF OBJECT_ID ('uspDateDimCreation', 'P') IS NOT NULL
@@ -30,6 +37,7 @@ IF OBJECT_ID ('uspDateDimCreation', 'P') IS NOT NULL
     
 """
 
+# Now we'll create a query which will create a DATE_DIM table with 16 rows as shown below.
 query_create = """
 
 CREATE PROCEDURE uspDateDimCreation
@@ -60,12 +68,14 @@ AS
 
 """
 
+# This query will execute our stored procedure
 query_exec = """
 
     EXEC uspDateDimCreation;
     
 """
 
+# Since we've created all three queries we need, we may execute them
 try:
     cursor.execute(query_drop)
     cursor.execute(query_create)
@@ -75,18 +85,21 @@ except pyodbc.Error as ex:
     sqlstate = ex.args[1]
     print(sqlstate)
 
+# Now let's check how it all works and create a query that shows us columns we've just created
 query_check = """
 
     SELECT * FROM DATE_DIM;
     
 """
 
+# Executing our check query
 try:
     cursor.execute(query_check)
 except pyodbc.Error as ex:
     sqlstate = ex.args[1]
     print(sqlstate)
 
+# This will print out our columns
 column = [column[0] for column in cursor.description]
 print('The following columns were created: \n')
 
