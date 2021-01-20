@@ -9,7 +9,9 @@ In order to populate it, run uspDateDimPopulate.py script.
 # pyodbc library will help us to connect to SQL Server
 import pyodbc
 
-# type you server name/address and database name you want to create DATE_DIM table in
+'''
+# Create Connection and Cursor objects for localhost with Windows Authentication only
+# Type you server name/address and database name you want to create DATE_DIM table in
 server = '[SERVER NAME]'
 db = '[DATABASE NAME]'
 
@@ -18,15 +20,15 @@ db = '[DATABASE NAME]'
 # If this script raises connection error, check what it says and try to write other driver you have at your PC
 conn = pyodbc.connect('DRIVER={SQL Server};SERVER=' + server + ';DATABASE=' + db + ';Trusted_Connection=yes')
 cursor = conn.cursor()
-
 '''
+
 # create Connection and Cursor objects for server not in localhost
 server = '[SERVER NAME]'
 db = '[DATABASE NAME]'
-username = '[myusername]' 
-password = '[mypassword]' 
-cursor = pyodbc.connect('DRIVER={SQL Server};SERVER=' + server + ';DATABASE=' + db + ';UID='+username+';PWD='+ password)
-'''
+username = '[USERNAME] 
+password = '[PASSWORD]' 
+conn = pyodbc.connect('DRIVER={SQL Server};SERVER=' + server + ';DATABASE=' + db + ';UID='+username+';PWD='+ password)
+cursor = conn.cursor()
 
 # First we check if uspDateDimCreation stored procedure already exists in DB. If it does, we delete it.
 # Note that we create queries, but will execute them all together later.
