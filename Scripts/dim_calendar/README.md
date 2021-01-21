@@ -89,6 +89,8 @@ days_ago INT NOT NULL,
 written_date VARCHAR(32) NOT NULL,
 ```
 
+Feel free to add additional columns or delete unnecessary.
+
 ## Who Needs an Empty Table?
 
 Well, our empty table is useless so far. Why don't we populate it with some useful stuff?
@@ -104,3 +106,8 @@ query_exec = """
     
 """
 ```
+
+Once you make all the changes to the script, you may run it. If everything goes well, you may find the following result in your DATE_DIM table in the database:
+
+![Result in database](https://github.com/a-kravets/Data-Engineering-101/blob/master/Scripts/dim_calendar/result_date_dim.PNG)
+
