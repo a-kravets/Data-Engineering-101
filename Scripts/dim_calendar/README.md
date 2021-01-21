@@ -62,8 +62,45 @@ password = '[PASSWORD]'
 
 You may find server name in the login window when you're connecting to your SQL Server as shown below:
 
-![Server name](https://github.com/a-kravets/Data-Engineering-101/blob/master/Scripts/dim_calendar/server_name.PNG)
+![Server name](https://github.com/a-kravets/Data-Engineering-101/blob/master/Scripts/dim_calendar/server_name1.PNG)
 
 As to database name, it's just a name of the database you want to get access to, which you may find in Object Explorer window in your DBMS (for example AdventureWorks2017 as shown below).
 
 ![Database name](https://github.com/a-kravets/Data-Engineering-101/blob/master/Scripts/dim_calendar/dbname.PNG)
+
+As a result of running this script, you'll get a table with the following columns:
+
+```sql
+date VARCHAR(10) NOT NULL,
+year INT NOT NULL,
+month VARCHAR(16) NOT NULL,
+day INT NOT NULL,
+quarter INT NOT NULL,
+month_num INT NOT NULL,
+firstday_of_month VARCHAR(16) NOT NULL,
+lastday_of_month VARCHAR(16) NOT NULL,
+days_till_end_of_month INT NOT NULL,
+days_till_end_of_year INT NOT NULL,
+week_num INT NOT NULL,
+daynum_in_year INT NOT NULL,
+weekday VARCHAR(16) NOT NULL,
+weekday_num INT NOT NULL,
+days_ago INT NOT NULL,
+written_date VARCHAR(32) NOT NULL,
+```
+
+## Who Needs an Empty Table?
+
+Well, our empty table is useless so far. Why don't we populate it with some useful stuff?
+
+In order to do so, we need to run a file called `uspDateDimPopulate.py`. Just like with the previous one, we need to enter our credentials (username and password) as well as server name and database name.
+
+On top of that we need to specify what date range we'd like to populate our table with. In the example below we specify the start date as `'20200101'` and the end date as `'20201231'`.
+
+```sql
+query_exec = """
+
+    EXEC uspDateDimPopulate '20200101', '20201231';
+    
+"""
+```
