@@ -30,7 +30,7 @@ def write_local(df: pd.DataFrame, color: str, dataset_file: str) -> Path:
     df.to_parquet(path, compression="gzip")
     return path
 
-
+# register block with `prefect block register -m prefect_gcp`
 @task()
 def write_gcs(path: Path) -> None:
     """Upload local parquet file to GCS"""
