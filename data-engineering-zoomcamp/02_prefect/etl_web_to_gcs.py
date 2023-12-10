@@ -8,13 +8,10 @@ from random import randint
 @task(retries=3)
 def fetch(dataset_url: str) -> pd.DataFrame:
     """Read taxi data from web into pandas DataFrame"""
-    # if randint(0, 1) > 0:
-    #     raise Exception
-
     df = pd.read_csv(dataset_url)
     return df
 
-
+# log_prints means that every time we pront something, Prefect logs it and we'll able to see it
 @task(log_prints=True)
 def clean(df: pd.DataFrame) -> pd.DataFrame:
     """Fix dtype issues"""
