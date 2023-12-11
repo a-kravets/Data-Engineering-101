@@ -38,7 +38,7 @@ By running `prefect deployment build` Prefect will create a `yaml` file. In our 
 
 After that we may run `prefect deployment apply etl_parent_flow-deployment.yaml`
 
-To set the flow runs from this deployment to be active, start an agent that pulls work from the 'default' work queue by running `prefect agent start --pool "default-agent-pool" --work-queue "default"`, where
+To execute flow runs from this deployment, start an agent that pulls work from the 'default' work queue by running `prefect agent start --pool "default-agent-pool" --work-queue "default"`, where
 
 * `'default'` is the name of a work queue
 * `"default-agent-pool"` is the name of an agent
@@ -53,3 +53,11 @@ We may set [**schedules**](https://docs.prefect.io/latest/concepts/schedules/) i
 * Via a the `cron`, `interval`, or `rrule` parameters if building your deployment via the serve method of the Flow object or the serve utility for managing multiple flows simultaneously
 * If using worker-based deployments
 * Through the interactive `prefect deploy` command. With the `deployments` -> `schedule` section of the `prefect.yaml` file
+
+For example, we may specify schedule via `cron` right in the build model:
+
+`prefect deployment build ./ingest_data_prefect_parameterized.py:etl_parent_flow -n "Parameterized ETL2" --cron "0 0 * * *" -a`, where
+
+* `--cron` specifies a cron pattern
+* `"0 0 * * *"` means it'll run at 12:00 AM every day
+* `-a` says Prefect to apply that
