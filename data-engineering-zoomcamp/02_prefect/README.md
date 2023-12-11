@@ -43,7 +43,9 @@ To set the flow runs from this deployment to be active, start an agent that pull
 * `'default'` is the name of a work queue
 * `"default-agent-pool"` is the name of an agent
 
-It will launch the flow, will stay active and will follow a schedule of flow runs, if there is any.
+These names can be found and set in Prefect UI.
+
+The command above will launch the flow, which will stay active and will follow a schedule of flow runs, if there is any.
 
 We may set [**schedules**](https://docs.prefect.io/latest/concepts/schedules/) in multiple ways:
 
