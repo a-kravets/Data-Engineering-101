@@ -2,7 +2,7 @@
 
 Install Perfect with `pip install prefect -U`
 
-A [**flow**](https://docs.prefect.io/latest/concepts/flows/) is the most basic Prefect object that is a container for workflow logic and allows you to interact and understand the state of the workflow. Flows are like functions, they take inputs, preform work, and return an output. We can start by using the @flow decorator to a main_flow function.
+A [**flow**](https://docs.prefect.io/latest/concepts/flows/) is the most basic Prefect object that is a container for workflow logic and allows you to interact and understand the state of the workflow. Flows are like functions, they take inputs, preform work, and return an output. We can start by using the `@flow` decorator to a main_flow function.
 
 Flows contain tasks. [**Tasks**](https://docs.prefect.io/latest/concepts/tasks/) are not required for flows but tasks are special because they receive metadata about upstream dependencies and the state of those dependencies before the function is run, which gives you the opportunity to have a task wait on the completion of another task before executing.
 
@@ -20,3 +20,28 @@ By opening up localhost we can see the Prefect UI, which gives us a nice dashboa
 [**Blocks**](https://docs.prefect.io/latest/concepts/blocks/) are a primitive within Prefect that enable the storage of configuration and provide an interface with interacting with external systems. There are several different types of blocks you can build, and you can even create your own. Block names are immutable so they can be reused across multiple flows. Blocks can also build upon blocks or be installed as part of Intergration collection which is prebuilt tasks and blocks that are pip installable. For example, a lot of users use the SqlAlchemy
 
 # ETL with Google Cloud Platform and Prefect
+
+Files:
+* `etl_web_to_gcs.py` gets the data from the web, saves it locally, does some cleaning and stores the result in Google Storage bucket
+* `etl_gcs_to_bq.py` does the same thing, but also saves data to BigQuery
+* `ingest_data_prefect_parameterized.py` uses parameters instead of hard-coded values
+
+# Deployment
+
+In order to deploy our flow, we run `prefect deployment build ./ingest_data_prefect_parameterized.py:etl_parent_flow -n "Parameterized ETL"`, where:
+
+* `./ingest_data_prefect_parameterized.py` is a path to the flow
+* `etl_parent_flow` is the entry point (there can be multiple flows in a file)
+* `"Parameterized ETL"` is a name of the deployment
+
+By running `prefect deployment build` Prefect will create a `yaml` file. In our case it's called `etl_parent_flow-deployment.yaml`, which specifies params and options for Prefect to deploy.
+
+After that we may run `prefect deployment apply etl_parent_flow-deployment.yaml`
+
+To execute flow runs from this deployment, start an agent that pulls work from the 'default' work queue by running `prefect agent start --pool "default-agent-pool" --work-queue "default"`, where
+
+* `'default'` is the name of a work queue
+* `"default-agent-pool"` is the name of an agent
+
+
+We may set [schedules](https://docs.prefect.io/latest/concepts/schedules/) in miltiple ways.
