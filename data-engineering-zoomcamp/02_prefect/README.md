@@ -43,7 +43,7 @@ To execute flow runs from this deployment, start an agent that pulls work from t
 * `'default'` is the name of a work queue
 * `"default-agent-pool"` is the name of an agent
 
-We may set [schedules](https://docs.prefect.io/latest/concepts/schedules/) in multiple ways:
+We may set [**schedules**](https://docs.prefect.io/latest/concepts/schedules/) in multiple ways:
 
 * Through the Prefect UI
 * Via a the `cron`, `interval`, or `rrule` parameters if building your deployment via the serve method of the Flow object or the serve utility for managing multiple flows simultaneously
