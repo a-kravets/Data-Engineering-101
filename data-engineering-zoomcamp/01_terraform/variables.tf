@@ -1,5 +1,6 @@
 locals {
   data_lake_bucket = "de_zoomcamp_data_lake"
+  bq_table = "de_zoomcamp_bq_taxi_rides"
 }
 
 variable "credentials" {
@@ -12,7 +13,7 @@ variable "credentials" {
 
 variable "project" {
   description = "Project"
-  default     = "de-zoomcamp"
+  default     = "de-zoomcamp-407509"
 }
 
 variable "region" {
