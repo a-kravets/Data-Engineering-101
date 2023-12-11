@@ -61,3 +61,21 @@ For example, we may specify schedule via `cron` right in the build model:
 * `--cron` specifies a cron pattern
 * `"0 0 * * *"` means it'll run at 12:00 AM every day
 * `-a` says Prefect to apply that
+
+# Docker
+
+* `docker image build -t prefect:zoom .`
+* `docker login`
+* `docker image push prefect:zoom`
+
+**Running in a docker container:**
+
+`prefect profile ls` shows which profile we're using at the moment
+
+Run `prefect config set PREFECT_API_URL="http://127.0.0.1:4200/api"` to be able to run flows in docker locally
+
+Start our agent with `prefect agent start -q default`
+
+We may overwrite parameters during deployment with `prefect deployment run etl-parent-flow/docker-flow -p "months=[1, 2]"`, where
+
+`-p "months=[1, 2]"` overwrites parameter with a name `months`
