@@ -38,10 +38,12 @@ By running `prefect deployment build` Prefect will create a `yaml` file. In our 
 
 After that we may run `prefect deployment apply etl_parent_flow-deployment.yaml`
 
-To execute flow runs from this deployment, start an agent that pulls work from the 'default' work queue by running `prefect agent start --pool "default-agent-pool" --work-queue "default"`, where
+To set the flow runs from this deployment to be active, start an agent that pulls work from the 'default' work queue by running `prefect agent start --pool "default-agent-pool" --work-queue "default"`, where
 
 * `'default'` is the name of a work queue
 * `"default-agent-pool"` is the name of an agent
+
+It will launch the flow and will follow a schedule of flow runs, if there is any.
 
 We may set [**schedules**](https://docs.prefect.io/latest/concepts/schedules/) in multiple ways:
 
