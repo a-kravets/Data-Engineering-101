@@ -83,10 +83,11 @@ for account in accounts:
                 response = service.searchanalytics().query(siteUrl=site_url, body=payload).execute()
                 results = []
 
-                # cleaning site url, leaving only domain
+                # cleaning site url, leaving only domain (add format cases if needed)
                 if 'sc-domain' in site_url:
                     site_url = site_url.rsplit(':')[1]
                 else:
+                    # if domain in 'https://domain.com/' format
                     site_url = site_url.rsplit('/')[2]
 
                 # looping over results
