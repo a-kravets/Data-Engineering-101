@@ -76,6 +76,7 @@ GROUP BY town
 SELECT count()
 FROM system.functions;
 
+-- https://clickhouse.com/docs/en/sql-reference/aggregate-functions/combinators
 --Using the topK function, write a query that returns the top 10 towns that are not London with the most properties sold
 SELECT topKIf(10)(town, town != 'LONDON')
 FROM uk_price_paid;
