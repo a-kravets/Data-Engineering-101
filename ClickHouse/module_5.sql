@@ -109,3 +109,7 @@ SELECT
 FROM uk_price_paid
 GROUP BY town
 ORDER BY 2 DESC;
+
+-- functions table
+SELECT count()
+FROM system.functions;
