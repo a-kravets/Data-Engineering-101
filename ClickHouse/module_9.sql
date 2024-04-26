@@ -16,6 +16,7 @@ SOURCE(
   )
 )
 LAYOUT(COMPLEX_KEY_HASHED())
+-- LIFETIME sets how frequently CH will update dictionary
 LIFETIME(2628000000);
 
 -- run query on that dict
