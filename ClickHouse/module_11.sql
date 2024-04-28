@@ -63,13 +63,14 @@ ORDER BY key
 -- if you don't want to delete data, you may aggregate it (roll up) after some period of time
 CREATE OR REPLACE TABLE ttl_demo3 (
     id Int,
-    x Decimal164(2),
-    y Decimal132(2),
- 	sum_x Decimal1256(2),
- 	max_y Decimal132(2)
+    x Decimal64(2),
+    y Decimal32(2),
+ 	sum_x Decimal256(2),
+ 	max_y Decimal32(2),
+ 	timestamp DateTime
 )
 ENGINE = MergeTree
 ORDER BY id 
 -- it aggregates data after 1 MONTH
 -- to sum_x and max_y
-TTL now() + INTERVAL 1 MONTH GROUP BY id SET sum_x = sum(x), max_y = max(y)
+TTL timestamp + INTERVAL 1 MONTH GROUP BY id SET sum_x = sum(x), max_y = max(y)
