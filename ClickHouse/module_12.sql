@@ -56,3 +56,23 @@ ALTER TABLE uk_price_paid
 
 ALTER TABLE uk_price_paid 
 	MATERIALIZE INDEX town_set_index
+
+	
+-- returns the size of data skipping indexes (aka secondary indexes)	
+SELECT
+    table,
+    formatReadableSize(data_compressed_bytes) as data_compressed,
+    formatReadableSize(secondary_indices_compressed_bytes) as index_compressed,
+    formatReadableSize(primary_key_size) as primary_key
+FROM
+    system.parts
+ORDER BY secondary_indices_uncompressed_bytes DESC
+LIMIT 5;
+
+
+-- returns the amount of disk space being consumed by uk_price_paid
+SELECT
+    formatReadableSize(sum(bytes_on_disk)),
+    count() AS num_of_parts
+FROM system.parts
+WHERE table = 'uk_price_paid' AND active = 1;
